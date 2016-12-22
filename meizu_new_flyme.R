@@ -145,6 +145,10 @@ get_info <- function(link_source){
   
   result$publish_day <- as.integer(gsub("-", "", result$publish_date))
   result$insert_day <- format(Sys.Date(), "%Y%m%d")
+  result$phone1 <- iconv(result$phone, "CP936", "UTF8")
+  result$version1 <- iconv(result$version, "CP936", "UTF8")
+  result$tag1 <- iconv(result$tag, "CP936", "UTF8")
+  
   
   #写入到数据库
   library(DBI)
@@ -169,10 +173,12 @@ get_info <- function(link_source){
                          format(Sys.Date(), "%Y%m%d"), sep="")
                           )
   dbCommit(con)
-  dbWriteTable(con, "phone_flyme", result,append=T, row.names=F)
+  result1 <- result[, -c(5, 8,9)]
+  names(result1)[9:11] <- c("phone", "version", "tag")
+  dbWriteTable(con, "phone_flyme", result1,append=T, row.names=F)
   dbCommit(con)
   # dbGetQuery(con, "select * from phone_flyme limit 10")
-  write.csv(result, file=paste("d:\\", format(Sys.Date(), "%Y%m%d"), "_Flyme最新固件.csv",sep=""),
+  write.csv(result[, -c(12:14)], file=paste("d:\\", format(Sys.Date(), "%Y%m%d"), "_Flyme最新固件.csv",sep=""),
              row.names=F)
 }
 
@@ -180,5 +186,7 @@ get_info <- function(link_source){
 
 
 get_info(link_source)
+
+
 
 
