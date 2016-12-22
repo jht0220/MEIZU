@@ -129,7 +129,7 @@ get_search_value <- function(keyword, handle){
 
 
 
-#模拟登录知乎 并获取代码
+
 zhihu <- function(keyword = "魅族", user="kyl20@126.com", pass="kyl20@sina"){
 
 
@@ -156,3 +156,7 @@ if(dbExistsTable(con, "table_question")){
 }else{
   dbWriteTable(con, "table_question",dat,row.names=F, append=F,overwrite=T)
 }
+
+sql <- "select hardware,publish_date from meizu.phone_flyme limit 100"
+
+dbGetQuery(con, sql)
