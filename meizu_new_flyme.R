@@ -144,6 +144,7 @@ get_info <- function(link_source){
                                          "update_date", "phone", "id", "type", "version", "tag"))
   
   result$publish_day <- as.integer(gsub("-", "", result$publish_date))
+  result$insert_day <- format(Sys.Date(), "%Y%m%d")
   
   #写入到数据库
   library(DBI)
@@ -156,14 +157,23 @@ get_info <- function(link_source){
   
   
   dbSendQuery(con, 'SET NAMES UTF8')
-  # dbSendQuery(con, "create table phone_flyme (hardware char(100),
-  #             shortname char(100), publish_date char(20), 
-  #             update_date char(20), phone char(50), id int,
-  #             type char(20), version char(20), tag char(20), publish_day int)")
-  
-  #dbWriteTable(con, "phone_flyme", result,overwrite=T, row.names=F)
+  if(!dbExistsTable(con, "phone_flyme")){
+   dbSendQuery(con, "create table phone_flyme (hardware char(100),
+               shortname char(100), publish_date char(20), 
+              update_date char(20), phone char(50), id int,
+               type char(20), version char(20), tag char(20), publish_day int,
+               insert_day int)")
+  dbCommit(con)
+  }
+  dbSendQuery(con, paste("delete from meizu.phone_flyme where insert_day=", 
+                         format(Sys.Date(), "%Y%m%d"), sep="")
+                          )
+  dbCommit(con)
+  dbWriteTable(con, "phone_flyme", result,append=T, row.names=F)
+  dbCommit(con)
   # dbGetQuery(con, "select * from phone_flyme limit 10")
-  write.csv(result, file="d:\\1.csv", sep="\t", row.names=F)
+  write.csv(result, file=paste("d:\\", format(Sys.Date(), "%Y%m%d"), "_Flyme最新固件.csv",sep=""),
+             row.names=F)
 }
 
 
