@@ -155,8 +155,8 @@ get_info <- function(link_source){
   library(RMySQL)
   
   # 
-  con <- dbConnect(RMySQL::MySQL(), host = "127.0.0.1",dbname="meizu",
-                   user = "root", password = "kyl0220")
+  con <- dbConnect(RMySQL::MySQL(), host = "****",dbname="****",
+                   user = "****", password = "****")
   
   
   
